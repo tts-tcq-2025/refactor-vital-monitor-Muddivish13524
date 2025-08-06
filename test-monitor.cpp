@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <string>
-#include "./monitor.hpp"
+#include "./monitor.h"
 
 std::vector<std::string> messages;
 auto captureAlert = [&messages](const std::string& msg) {
@@ -31,6 +31,7 @@ TEST(Monitor, Spo2OutOfRangeLow) {
 TEST(Monitor, AllVitalsOk) {
     ASSERT_TRUE(areAllVitalsNormal(98.6, 70, 95, captureAlert));
 }
+
 
 
 
