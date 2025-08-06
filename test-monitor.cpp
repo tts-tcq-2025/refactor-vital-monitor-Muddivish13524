@@ -1,32 +1,43 @@
-#include <cassert>
+#include <gtest/gtest.h>
+#include <vector>
+#include <string>
+#include "./monitor.hpp"
 
-// Reuse function declarations from your main code
-bool isTemperatureCritical(float temperature);
-bool isPulseRateOutOfRange(float pulseRate);
-bool isSpo2Low(float spo2);
+std::vector<std::string> messages;
+auto captureAlert = [&messages](const std::string& msg) {
+        messages.push_back(msg);
+    };
 
-void runTests() {
-    // Test isTemperatureCritical
-    assert(isTemperatureCritical(102.1f) == true);  // High fever
-    assert(isTemperatureCritical(94.9f) == true);   // Hypothermia
-    assert(isTemperatureCritical(98.6f) == false);  // Normal
-    assert(isTemperatureCritical(102.0f) == false); // Edge case (upper bound)
-    assert(isTemperatureCritical(95.0f) == false);  // Edge case (lower bound)
-
-    // Test isPulseRateOutOfRange
-    assert(isPulseRateOutOfRange(59.9f) == true);   // Too low
-    assert(isPulseRateOutOfRange(100.1f) == true);  // Too high
-    assert(isPulseRateOutOfRange(75.0f) == false);  // Normal
-    assert(isPulseRateOutOfRange(60.0f) == false);  // Edge case (lower bound)
-    assert(isPulseRateOutOfRange(100.0f) == false); // Edge case (upper bound)
-
-    // Test isSpo2Low
-    assert(isSpo2Low(89.9f) == true);               // Too low
-    assert(isSpo2Low(90.0f) == false);              // Edge case (threshold)
-    assert(isSpo2Low(98.0f) == false);              // Normal
-
-    // All tests passed
-    std::cout << "All tests passed successfully.\n";
+TEST(Monitor, TemperatureOutOfRangeHigh) {
+    ASSERT_FALSE(areAllVitalsNormal(103.0, 70, 95, captureAlert));
 }
+
+TEST(Monitor, TemperatureOutOfRangeLow) {
+    ASSERT_FALSE(areAllVitalsNormal(94.0, 70, 95, captureAlert));
+}
+
+TEST(Monitor, PulseRateOutOfRangeHigh) {
+    ASSERT_FALSE(areAllVitalsNormal(98.6, 105.0, 95, captureAlert));
+}
+
+TEST(Monitor, PulseRateOutOfRangeLow) {
+    ASSERT_FALSE(areAllVitalsNormal(98.6, 50.0, 95, captureAlert));
+}
+
+TEST(Monitor, Spo2OutOfRangeLow) {
+    ASSERT_FALSE(areAllVitalsNormal(98.6, 70, 85.0, captureAlert));
+}
+
+TEST(Monitor, AllVitalsOk) {
+    ASSERT_TRUE(areAllVitalsNormal(98.6, 70, 95, captureAlert));
+}
+
+
+
+
+
+
+
+
 
 
