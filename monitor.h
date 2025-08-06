@@ -1,8 +1,15 @@
 #pragma once
+#include <string>
+#include <functional>
 
-int vitalsOk(float temperature, float pulseRate, float spo2);
-bool isTemperatureCritical(float temperature);
-bool isPulseRateOutOfRange(float pulseRate);
-bool isSpo2Low(float spo2);
+struct VitalCheck {
+    std::string name;
+    float value;
+    float min;
+    float max;
+};
+
+int areAllVitalsNormal(float temperature, float pulseRate, float spo2,
+             std::function<void(const std::string&)> alert = nullptr);
 
 
