@@ -1,47 +1,45 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include <string_view>
-#include <cassert>
-using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
+#include <string>
+#include "./monitor.hpp"
 
-// Pure functions to check individual vitals (no I/O or delays)
-bool isTemperatureCritical(float temperature) {
-    return temperature > 102.0f || temperature < 95.0f;
-}
+using std::cout, std::flush;
+using std::this_thread::sleep_for;
+using std::chrono::seconds;
 
-bool isPulseRateOutOfRange(float pulseRate) {
-    return pulseRate < 60.0f || pulseRate > 100.0f;
-}
+bool checkVital(const VitalCheck& vital, std::function<void(const std::string&)> alert);
 
-bool isSpo2Low(float spo2) {
-    return spo2 < 90.0f;
-}
-
-// Function to blink alert (I/O + delay separated from logic)
-void alertBlink(std::string_view alertMessage, int blinkCount = 6, int delaySeconds = 1) {
-    cout << alertMessage << '\n';
-    for (int i = 0; i < blinkCount; ++i) {
+void PrintAlertMessage(const std::string& message) {
+    cout << message << "\n";
+    for (int i = 0; i < 6; ++i) {
         cout << "\r* " << flush;
-        sleep_for(seconds(delaySeconds));
+        sleep_for(seconds(1));
         cout << "\r *" << flush;
-        sleep_for(seconds(delaySeconds));
+        sleep_for(seconds(1));
     }
 }
 
-// Main function to check vitals and trigger alert if needed
-int vitalsOk(float temperature, float pulseRate, float spo2) {
-    if (isTemperatureCritical(temperature)) {
-        alertBlink("Temperature is critical!");
-        return 0;
+bool checkVital(const VitalCheck& vital, std::function<void(const std::string&)> alert) {
+    if (vital.value < vital.min || vital.value > vital.max) {
+        alert(vital.name + " is out of range!");
+        return false;
     }
-    if (isPulseRateOutOfRange(pulseRate)) {
-        alertBlink("Pulse Rate is out of range!");
-        return 0;
+    return true;
+}
+
+int areAllVitalsNormal(float temperature, float pulseRate, float spo2,
+             std::function<void(const std::string&)> alert) {
+const VitalCheck vitals[] = {
+        {"Temperature", temperature, 95.0, 102.0},
+        {"Pulse Rate", pulseRate, 60.0, 100.0},
+        {"Oxygen Saturation", spo2, 90.0, 100.0}
+    };
+
+    bool allVitalsOk = true;
+    for (int i = 0; i < 3; ++i) {
+        allVitalsOk = checkVital(vitals[i], alert) && allVitalsOk;
     }
-    if (isSpo2Low(spo2)) {
-        alertBlink("Oxygen Saturation out of range!");
-        return 0;
-    }
-    return 1;
+
+    return allVitalsOk;
 }
