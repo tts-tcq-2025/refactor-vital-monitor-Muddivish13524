@@ -8,7 +8,7 @@ using std::cout, std::flu#include <iostream>
 #include <thread>
 #include <chrono>
 #include <string>
-#include "./monitor.hpp"
+#include "./monitor.h"
 
 using std::cout, std::flush;
 using std::this_thread::sleep_for;
