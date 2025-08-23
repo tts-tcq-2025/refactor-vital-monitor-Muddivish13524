@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <string>
-#include "./monitor.h"
+#include "./monitor.hpp"
 
 std::vector<std::string> messages;
 auto captureAlert = [&messages](const std::string& msg) {
