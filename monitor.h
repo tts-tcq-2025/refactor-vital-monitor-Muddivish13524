@@ -11,5 +11,3 @@ struct VitalCheck {
 
 int areAllVitalsNormal(float temperature, float pulseRate, float spo2,
              std::function<void(const std::string&)> alert = nullptr);
-
-
