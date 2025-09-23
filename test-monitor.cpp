@@ -6,7 +6,7 @@
 std::vector<std::string> messages;
 auto captureAlert = [&messages](const std::string& msg) {
         messages.push_back(msg);
-    };
+    }; 
 
 TEST(Monitor, TemperatureOutOfRangeHigh) {
     ASSERT_FALSE(areAllVitalsNormal(103.0, 70, 95, captureAlert));
@@ -31,6 +31,7 @@ TEST(Monitor, Spo2OutOfRangeLow) {
 TEST(Monitor, AllVitalsOk) {
     ASSERT_TRUE(areAllVitalsNormal(98.6, 70, 95, captureAlert));
 }
+
 
 
 
