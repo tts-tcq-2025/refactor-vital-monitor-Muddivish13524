@@ -4,7 +4,7 @@
 #include <string>
 #include "./monitor.hpp"
 
-using std::cout, std::flush;
+using std::cout, std::flush; 
 using std::this_thread::sleep_for;
 using std::chrono::seconds;
 
